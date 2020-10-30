@@ -1,6 +1,7 @@
 // Copyright 2017 Yahoo Holdings. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
 
 #include "document_scorer.h"
+#include <algorithm>
 #include <cassert>
 
 using search::feature_t;
@@ -30,10 +31,13 @@ DocumentScorer::DocumentScorer(RankProgram &rankProgram,
 {
 }
 
-feature_t
-DocumentScorer::score(uint32_t docId)
+void
+DocumentScorer::score(TaggedHits &hits)
 {
-    return doScore(docId);
+    std::sort(hits.begin(), hits.end()); // sort on docid
+    for (auto &hit: hits) {
+        hit.first.second = doScore(hit.first.first);
+    }
 }
 
 }
